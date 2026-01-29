@@ -1,5 +1,4 @@
-from flask import Flask, jsonify, request
-import random
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
@@ -7,22 +6,21 @@ app = Flask(__name__)
 def home():
     return jsonify({"message": "Backend is running"})
 
-@app.route("/detect", methods=["POST"])
-def detect_voice():
+@app.route("/predict", methods=["POST"])
+def predict():
     data = request.get_json()
 
     if not data or "audio_base64" not in data:
-        return jsonify({"error": "audio_base64 field is required"}), 400
+        return jsonify({"error": "audio_base64 missing"}), 400
 
-    classification = random.choice(["AI_GENERATED", "HUMAN"])
-    confidence = round(random.uniform(0.7, 0.99), 2)
+    
+    result = {
+        "classification": "HUMAN",
+        "confidence": 0.85,
+        "language": "English"
+    }
 
-    return jsonify({
-        "classification": classification,
-        "confidence_score": confidence,
-        "explanation": "Placeholder detection logic for Round 1",
-        "supported_languages": ["Tamil", "English", "Hindi", "Malayalam", "Telugu"]
-    })
+    return jsonify(result)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
